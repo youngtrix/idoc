@@ -1,0 +1,7 @@
+#wrapper {margin:0 auto;width:1000px;background-color:#eee;padding:10px 20px;}
+.fl {float:left;}
+.fr {float:right;}
+.clear {clear:both;}
+#project_list li {line-height:30px;list-style-position:outside;}
+#project_list {min-height:500px;}
+#footer {height:30px;}
