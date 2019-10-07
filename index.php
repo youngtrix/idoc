@@ -21,7 +21,7 @@ while ( $row = $db->fetch_array($query) ) {
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>网站首页 - Powered by idoc</title>
+    <title>idoc - 在线文档管理</title>
     <meta name="author" content="codespeaking" />
     <meta name="site" content="http://codespeaking.com" />
     <link href="admin/css/bootstrap.min.css" rel="stylesheet">
@@ -57,6 +57,7 @@ while ( $row = $db->fetch_array($query) ) {
             <nav class="navbar-collapse hidden-xs hidden-sm" role="navigation">
                 <ul class="nav navbar-nav navbar-right">
                     <li><a href="admin/login.php" title="用户登录">登录</a></li>
+                    <li><a href="admin/register.php" title="用户注册">注册</a></li>
                 </ul>
             </nav>
         </div>
