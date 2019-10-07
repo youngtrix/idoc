@@ -117,7 +117,8 @@ $navMenu = getNavMenuOfTree($tree, $prid, $article_id, $pids);
             </div>
             <script type="text/javascript">
                 $.getJSON('get.php', {'aid': <?php echo $article_id;?>, 'id':<?php echo $_GET['id'];?>}, function(json){
-                    content = json.content.replace(/\r\n/g, "\t\r\n");
+                    //content = json.content.replace(/\r\n/g, "\t\r\n");
+                    content = json.content.replace(/\n/g, "\t\r\n");
                     $('#article_title').text(json.title);
                     $('span.prev').html(json.prev);
                     $('span.next').html(json.next);
