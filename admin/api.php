@@ -131,6 +131,15 @@ if ($act == 'delete_project') {
     $ret = ['status'=>'SUCC', 'msg'=>'操作成功!'];
 }
 
+// 编辑项目前的检查
+if ($act == 'edit_project') {
+    $pid = $_REQUEST['pid'];
+    $sql = 'SELECT id FROM ' . DB_PREFIX . 'article WHERE project_id=' . $pid;
+    $query = $db->query($sql);
+    $row = $db->fetch_array($query);
+    $ret = ['status'=>'SUCC', 'msg'=>'操作成功!', 'node_count'=>count($row)];
+}
+
 if ( empty($ret) ) {
     $ret = ['status'=>'FAIL', 'msg'=>'操作失败, 请检查act参数值是否正确!'];
 }

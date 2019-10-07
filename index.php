@@ -1,4 +1,5 @@
 <?php
+session_start();
 require 'config.php';
 require 'db.class.php';
 
@@ -14,7 +15,15 @@ while ( $row = $db->fetch_array($query) ) {
     $rows[] = $row;
 }
 
+$username = '';
+if ( isset($_SESSION['user_id']) && intval($_SESSION['user_id'])>0 ) {
+    $sql_ = 'SELECT username FROM ' . DB_PREFIX . 'user WHERE id=' . $_SESSION['user_id'];
+    $query_ = $db->query($sql_);
+    $row_ = $db->fetch_array($query_);
+    $username = $row_['username'];
+}
 ?>
+
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -56,8 +65,13 @@ while ( $row = $db->fetch_array($query) ) {
             </div>
             <nav class="navbar-collapse hidden-xs hidden-sm" role="navigation">
                 <ul class="nav navbar-nav navbar-right">
-                    <li><a href="admin/login.php" title="用户登录">登录</a></li>
-                    <li><a href="admin/register.php" title="用户注册">注册</a></li>
+                    <?php
+                        if ( !empty($username) ) {
+                            echo '<li><a href="admin/index.php" title="后台">' . $username . '</a></li>';
+                        } else {
+                            echo '<li><a href="admin/login.php" title="用户登录">登录</a></li><li><a href="admin/register.php" title="用户注册">注册</a></li>';
+                        }
+                    ?>
                 </ul>
             </nav>
         </div>
@@ -129,7 +143,7 @@ EOF;
         </div>
     </div>
 </div>
-<script src="admin/js/jquery/jquery.min.js" type="text/javascript"></script>
+<script src="admin/js/jquery.min.js" type="text/javascript"></script>
 <script src="admin/js/bootstrap.min.js" type="text/javascript"></script>
 </body>
 </html>

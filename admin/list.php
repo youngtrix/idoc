@@ -76,11 +76,14 @@ function getArticleInfo($project_id) {
                             $str = '<tr class="gradeA"><td>' . $v['id'] . '</td><td>' . $v['project_name'] . '</td><td>' . $v['project_description'] . '</td><td>' . $v['username'] . '</td><td class="center">' . $v['create_time'] . '</td>
 <td class="center"><div class="js_tree" id="js_tree_' . $v['id'] .'"><ul><li data-id="0" data-pid="0" data-projectid="' . $v['id'] . '">/';
                             $str .= getUlOfTree(getTreeNode($nodesArr[$k]));
+                            /*
                             if ( empty($nodesArr[$k]) ) {
                                 $str .= '</li></ul></div></td><td><a href="javascript:alert(\'至少需要一个子节点才能进行编辑!\');">编辑&nbsp;&nbsp;<a href="javascript:delete_project(' . $v['id']. ');">删除</a></td></tr>';
                             } else {
                                 $str .= '</li></ul></div></td><td><a href="article.php?prid='.$v['id'].'">编辑</a>&nbsp;&nbsp;<a href="javascript:delete_project(' . $v['id']. ');">删除</a></td></tr>';
                             }
+                            */
+                            $str .= '</li></ul></div></td><td><a href="javascript:edit_project(' . $v['id'] . ')";>编辑</a>&nbsp;&nbsp;<a href="javascript:delete_project(' . $v['id']. ')";>删除</a></td></tr>';
                             echo $str;
                         }
                         ?>
@@ -132,6 +135,16 @@ function getArticleInfo($project_id) {
                 alert('操作失败!');
             }
         }, 'json');
+    }
+
+    function edit_project(pid) {
+        $.post('api.php', {'pid':pid, 'act':'edit_project'}, function(res){
+            if (res.node_count > 0) {
+                location.href = 'article.php?prid=' + pid;
+            } else {
+                alert('至少需要一个子节点才能进行编辑!');
+            }
+        });
     }
 
     $(document).ready(function () {
