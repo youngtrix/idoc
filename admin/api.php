@@ -23,7 +23,7 @@ if ($act == 'insert') {
         exit;
     }
 
-    if ( strpos($pids, $prid) === false ) {
+    if ( strpos($pids, ',' . $prid . ',') === false ) {
         echo json_encode(['status'=>'FAIL', 'msg'=>'非法的操作!']);
         exit;
     }
@@ -48,7 +48,7 @@ if ($act == 'update') {
         exit;
     }
 
-    if ( strpos($pids, $prid) === false ) {
+    if ( strpos($pids, ',' . $prid . ',') === false ) {
         echo json_encode(['status'=>'FAIL', 'msg'=>'非法的操作!']);
         exit;
     }
@@ -70,7 +70,7 @@ if ($act == 'delete') {
         exit;
     }
 
-    if ( strpos($pids, $prid) === false ) {
+    if ( strpos($pids, ',' . $prid . ',') === false ) {
         echo json_encode(['status'=>'FAIL', 'msg'=>'非法的操作!']);
         exit;
     }
@@ -90,7 +90,7 @@ if ($act == 'get_article_content') {
         exit;
     }
 
-    if ( strpos($pids, $prid) === false ) {
+    if ( strpos($pids, ',' . $prid . ',') === false ) {
         echo json_encode(['status'=>'FAIL', 'msg'=>'非法的操作!']);
         exit;
     }
@@ -114,7 +114,7 @@ if ($act == 'save_article_content') {
         exit;
     }
 
-    if ( strpos($pids, $prid) === false ) {
+    if ( strpos($pids, ',' . $prid . ',') === false ) {
         echo json_encode(['status'=>'FAIL', 'msg'=>'非法的操作!']);
         exit;
     }
@@ -156,7 +156,7 @@ if ($act == 'delete_project') {
         exit;
     }
 
-    if ( strpos($pids, $prid) === false ) {
+    if ( strpos($pids, ',' . $prid . ',') === false ) {
         echo json_encode(['status'=>'FAIL', 'msg'=>'非法的操作!']);
         exit;
     }
