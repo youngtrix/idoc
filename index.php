@@ -4,7 +4,7 @@ require 'config.php';
 require 'db.class.php';
 
 $db = MySqlii::getInstance();
-$sql = 'SELECT A.*, B.username FROM ' . DB_PREFIX . 'project as A LEFT JOIN '. DB_PREFIX .'user as B ON(A.user_id=B.id) order by A.id DESC';
+$sql = 'SELECT A.*, B.username FROM ' . DB_PREFIX . 'project as A LEFT JOIN '. DB_PREFIX .'user as B ON(A.user_id=B.id) WHERE A.is_open=1 OR A.user_id=' . intval($_SESSION['user_id']) . ' order by A.id DESC';
 $query = $db->query($sql);
 $rows = [];
 
@@ -66,11 +66,11 @@ if ( isset($_SESSION['user_id']) && intval($_SESSION['user_id'])>0 ) {
             <nav class="navbar-collapse hidden-xs hidden-sm" role="navigation">
                 <ul class="nav navbar-nav navbar-right">
                     <?php
-                        if ( !empty($username) ) {
-                            echo '<li><a href="admin/index.php" title="后台">' . $username . '</a></li>';
-                        } else {
-                            echo '<li><a href="admin/login.php" title="用户登录">登录</a></li><li><a href="admin/register.php" title="用户注册">注册</a></li>';
-                        }
+                    if ( !empty($username) ) {
+                        echo '<li><a href="admin/index.php" title="后台">' . $username . '</a></li><li><a href="admin/logout.php" title="退出登录">退出</a></li>';
+                    } else {
+                        echo '<li><a href="admin/login.php" title="用户登录">登录</a></li><li><a href="admin/register.php" title="用户注册">注册</a></li>';
+                    }
                     ?>
                 </ul>
             </nav>
@@ -100,10 +100,14 @@ if ( isset($_SESSION['user_id']) && intval($_SESSION['user_id'])>0 ) {
                     </dl>
                 </div>
                 -->
-<?php
-foreach ($rows as $v) {
-    $htdoc = <<<EOF
-    <div class="list-item"><dl class="manual-item-standard"><dt><a href="book.php?id={$v['id']}" title="{$v['project_name']}">
+                <?php
+                foreach ($rows as $v) {
+                    $style = '';
+                    if ($v['is_open'] == 0) {
+                        $style = "style='opacity:0.3'";
+                    }
+                    $htdoc = <<<EOF
+    <div class="list-item" {$style}><dl class="manual-item-standard"><dt><a href="book.php?id={$v['id']}" title="{$v['project_name']}">
                 <img src="{$v['cover_img']}" class="cover" alt="{$v['project_name']}">
             </a>
         </dt>
@@ -120,8 +124,8 @@ foreach ($rows as $v) {
     </dl>
 </div>
 EOF;
-    echo $htdoc;
-}?>
+                    echo $htdoc;
+                }?>
                 <div class="clearfix"></div>
             </div>
             <nav class="pagination-container">

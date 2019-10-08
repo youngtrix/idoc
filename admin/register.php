@@ -7,6 +7,10 @@ require_once __DIR__ . '/../db.class.php';
 if ( !empty($_POST) ) {
     $username = $_POST['username'];
     $password = $_POST['password'];
+
+    if ( empty($username) || empty($password) ) {
+        emMsg('用户名和密码不能为空!');
+    }
     $new_password = md5(PWD_SALT . $password . PWD_SALT);
     $db = MySqlii::getInstance();
     $time = date('Y-m-d H:i:s');
@@ -94,6 +98,13 @@ if ( !empty($_POST) ) {
     function register() {
         var username = $('#username').val();
         var password = $('#password').val();
+        var confirmpwd = $('#confirmpwd').val();
+
+        if (confirmpwd != password) {
+            alert('密码输入不一致,请重试!');
+            return;
+        }
+
         $.post('register.php', {'username':username, 'password':password}, function(res){
             if (res.code == -1) {
                 alert('用户名已存在,请更换用户名后重试!');
@@ -107,7 +118,5 @@ if ( !empty($_POST) ) {
 
 
 
-
 </body>
-
 </html>

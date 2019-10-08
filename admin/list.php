@@ -5,7 +5,7 @@ require __DIR__ . '/../help.class.php';
 require __DIR__ . '/check.php';
 
 $db = MySqlii::getInstance();
-$sql = 'SELECT A.*, B.username FROM ' . DB_PREFIX . 'project as A LEFT JOIN '. DB_PREFIX .'user as B ON(A.user_id=B.id) order by A.id DESC';
+$sql = 'SELECT A.*, B.username FROM ' . DB_PREFIX . 'project as A LEFT JOIN '. DB_PREFIX .'user as B ON(A.user_id=B.id) WHERE A.user_id=' . intval($_SESSION['user_id']) . ' order by A.id DESC';
 $query = $db->query($sql);
 $rows = [];
 $nodesArr = [];
@@ -65,16 +65,20 @@ function getArticleInfo($project_id) {
                             <th style="width:120px;">项目名称</th>
                             <th style="width:360px;">项目简介</th>
                             <th style="width:100px;">所属用户</th>
-                            <th style="width:126px;">创建时间</th>
                             <th>目录结构(右键鼠标可进行操作)</th>
                             <th style="width:80px;">操作</th>
+                            <th>是否公开</th>
+                            <th style="width:126px;">创建时间</th>
                         </tr>
                         </thead>
                         <tbody>
                         <?php
                         foreach ($rows as $k=>$v) {
-                            $str = '<tr class="gradeA"><td>' . $v['id'] . '</td><td>' . $v['project_name'] . '</td><td>' . $v['project_description'] . '</td><td>' . $v['username'] . '</td><td class="center">' . $v['create_time'] . '</td>
-<td class="center"><div class="js_tree" id="js_tree_' . $v['id'] .'"><ul><li data-id="0" data-pid="0" data-projectid="' . $v['id'] . '">/';
+                            $is_open = '否';
+                            if ($v['is_open'] == 1) {
+                                $is_open = '是';
+                            }
+                            $str = '<tr class="gradeA"><td>' . $v['id'] . '</td><td>' . $v['project_name'] . '</td><td>' . $v['project_description'] . '</td><td>' . $v['username'] . '</td><td class="center"><div class="js_tree" id="js_tree_' . $v['id'] .'"><ul><li data-id="0" data-pid="0" data-projectid="' . $v['id'] . '">/';
                             $str .= getUlOfTree(getTreeNode($nodesArr[$k]));
                             /*
                             if ( empty($nodesArr[$k]) ) {
@@ -83,7 +87,7 @@ function getArticleInfo($project_id) {
                                 $str .= '</li></ul></div></td><td><a href="article.php?prid='.$v['id'].'">编辑</a>&nbsp;&nbsp;<a href="javascript:delete_project(' . $v['id']. ');">删除</a></td></tr>';
                             }
                             */
-                            $str .= '</li></ul></div></td><td><a href="javascript:edit_project(' . $v['id'] . ')";>编辑</a>&nbsp;&nbsp;<a href="javascript:delete_project(' . $v['id']. ')";>删除</a></td></tr>';
+                            $str .= '</li></ul></div></td><td><a href="javascript:edit_project(' . $v['id'] . ');">编辑</a>&nbsp;&nbsp;<a href="javascript:delete_project(' . $v['id']. ');">删除</a></td><td class="center">' . $is_open .'</td><td class="center">' . $v['create_time'] . '</td></tr>';
                             echo $str;
                         }
                         ?>
@@ -144,7 +148,7 @@ function getArticleInfo($project_id) {
             } else {
                 alert('至少需要一个子节点才能进行编辑!');
             }
-        });
+        }, 'json');
     }
 
     $(document).ready(function () {
@@ -213,13 +217,14 @@ function getArticleInfo($project_id) {
                             var index = clickedNode.id;
                             var txt = $('#'+index+'_anchor').text();
                             var did = $('#'+index).attr('data-id');
+                            var prid = $('#'+index).attr('data-projectid'); // 当前选中节点的项目ID
                             if (txt == '/') {
                                 alert('根节点不能重命名!');
                                 return;
                             }
                             inst.edit(obj.reference, {}, function(){
                                 var title = $('#'+index+'_anchor').text();
-                                $.post('api.php', {'title':title, 'did':did, 'act':'update'}, function(res){
+                                $.post('api.php', {'title':title, 'did':did, 'prid':prid, 'act':'update'}, function(res){
                                     if (res.status == 'SUCC') {
                                         alert('操作成功!');
                                     } else {
@@ -238,6 +243,7 @@ function getArticleInfo($project_id) {
                             var index = clickedNode.id;
                             var txt = $('#'+index+'_anchor').text();
                             var did = $('#'+index).attr('data-id');
+                            var prid = $('#'+index).attr('data-projectid'); // 当前选中节点的项目ID
                             if (txt == '/') {
                                 alert('根节点不能删除!');
                                 return;
@@ -246,7 +252,7 @@ function getArticleInfo($project_id) {
                                 return;
                             }
                             inst.delete_node(obj.reference);
-                            $.post('api.php', {'did':did, 'act':'delete'}, function(res){
+                            $.post('api.php', {'did':did, 'prid':prid, 'act':'delete'}, function(res){
                                 if (res.status == 'SUCC') {
                                     alert('操作成功!');
                                 } else {

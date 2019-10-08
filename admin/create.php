@@ -8,7 +8,7 @@ require __DIR__ . '/check.php';
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>发布快讯 - 后台</title>
+    <title>发布项目 - 后台</title>
     <meta name="keywords" content="">
     <meta name="description" content="">
     <link rel="shortcut icon" href="favicon.ico">
@@ -41,7 +41,8 @@ require __DIR__ . '/check.php';
                         <div class="col-sm-12">
                             <form role="form">
                                 <input type="text" id="project_name" class="form-control m-b" placeholder="请输入项目标题, 1-60个字" style="width:700px;" />
-                                <textarea name="project_description" id="project_description" class="form-control m-b" style="width:700px;height:100px;" placeholder="项目描述(不超过255个字)"></textarea>
+                                <textarea name="project_description" id="project_description" class="form-control m-b" style="width:700px;height:100px;" placeholder="项目描述(不超过255个字)"></textarea><br />
+                                <abbr title="当设置为公开时,项目将显示在前端首页">是否公开</abbr>：<label style="font-weight:normal;"><input type="radio" checked value="0" id="optionsRadios1" name="is_open">否</label>&nbsp;<label style="font-weight:normal;"><input type="radio" value="1" id="optionsRadios2" name="is_open">是</label>
                                 <!--
                                 <br />
                                 <div class="form-group">
@@ -95,7 +96,7 @@ require __DIR__ . '/check.php';
 
     function submitForm() {
         var project_name = $('#project_name').val();
-        //var is_imp = $("input[name='optionsRadios2']:checked").val();
+        var is_open = $("input[name='is_open']:checked").val();
         var project_description = $('#project_description').val();
         //var img = $('#cover').attr('src');
         //img_upload = (img==undefined?'':img);
@@ -110,7 +111,7 @@ require __DIR__ . '/check.php';
             return;
         }
 
-        $.post('api.php', {'project_name':project_name, 'project_description':project_description, 'act':'create_project'}, function(res){
+        $.post('api.php', {'project_name':project_name, 'project_description':project_description, 'is_open':is_open, 'act':'create_project'}, function(res){
             if (res.pid > 0) {
                 alert('添加成功!');
                 history.go(0);
@@ -119,16 +120,6 @@ require __DIR__ . '/check.php';
             }
         }, 'json');
 
-        /*
-        $.post('/backend/createflash', {'type':type, 'is_imp':is_imp, 'create_time':create_time, 'title':title,
-                'content':content, 'comment':comment, 'cover':img_upload, 'cover2':img_upload2}, function(json){
-                if (json.status>0) {
-                    alert('添加成功!');
-                    history.go(0);
-                }
-            }
-        );
-        */
     }
 </script>
 </body>

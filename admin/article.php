@@ -55,6 +55,7 @@ $optionHtml = getSelectOptionsOfTree(getTreeNode($rows), 0, $did);
         <textarea style="display:none;" id="md"><?php echo $article_content;?></textarea>
     </div>
     <div style="margin-left:1%;margin-top:3px;">
+        <input type="hidden" name="prid" id="prid" value="<?php echo $prid;?>" />
         <button type="button" class="btn-primary btn btn-xs" style="padding:2px 10px;color:#ffffff !important;background-color:#7266ba;border-color:#7266ba;" onclick="save_content()">保存修改</button>&nbsp;
         <button type="button" style="padding:2px 10px;color:#ffffff !important;background-color:#7266ba;border-color:#7266ba;" class="btn btn-primary btn-xs" onclick="goback()">返回</button>
     </div>
@@ -215,7 +216,8 @@ $optionHtml = getSelectOptionsOfTree(getTreeNode($rows), 0, $did);
 <script type="text/javascript">
 $('#articles').change(function(){
     var val = $(this).val();
-    $.post('api.php', {'did':val, 'act':'get_article_content'}, function(res){
+    var prid = $('#prid').val();
+    $.post('api.php', {'did':val, 'prid':prid, 'act':'get_article_content'}, function(res){
         $('#md').val(res.content);
         testEditor = editormd("test-editormd", {
             width: "98%",
@@ -249,9 +251,10 @@ $('#articles').change(function(){
 
 function save_content() {
     var did = $('#articles').val();
+    var prid = $('#prid').val();
     var node_type = $("input[name='node_type']:checked").val();
     var article_content = testEditor.getMarkdown();
-    $.post('api.php', {'did':did, 'node_type':node_type, 'article_content':article_content, 'act':'save_article_content'}, function(res){
+    $.post('api.php', {'did':did, 'node_type':node_type, 'prid':prid, 'article_content':article_content, 'act':'save_article_content'}, function(res){
         if (res.status == 'SUCC') {
             alert('保存成功!');
         } else {

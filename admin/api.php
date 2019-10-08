@@ -9,6 +9,7 @@ $db = MySqlii::getInstance();
 $act = $_REQUEST['act'];
 
 $current_admin_uid = $_SESSION['user_id']; // 当前后台管理人员用户ID
+$pids = $_SESSION['pids'];
 $ret = [];
 
 // 新增节点
@@ -19,6 +20,11 @@ if ($act == 'insert') {
 
     if ( is_null($title) || is_null($did) || is_null($prid) ) {
         echo json_encode(['status'=>'FAIL', 'msg'=>'缺少必要的参数值!']);
+        exit;
+    }
+
+    if ( strpos($pids, $prid) === false ) {
+        echo json_encode(['status'=>'FAIL', 'msg'=>'非法的操作!']);
         exit;
     }
 
@@ -35,14 +41,20 @@ if ($act == 'insert') {
 if ($act == 'update') {
     $title = $_REQUEST['title'];
     $did = $_REQUEST['did'];
+    $prid = $_REQUEST['prid'];
 
-    if ( is_null($title) || is_null($did) ) {
+    if ( is_null($title) || is_null($did) || is_null($prid) ) {
         echo json_encode(['status'=>'FAIL', 'msg'=>'缺少必要的参数值!']);
         exit;
     }
 
+    if ( strpos($pids, $prid) === false ) {
+        echo json_encode(['status'=>'FAIL', 'msg'=>'非法的操作!']);
+        exit;
+    }
+
     $update_time = date('Y-m-d H:i:s');
-    $title = addslashes($title);
+    $title = htmlspecialchars(addslashes($title));
     $sql = "UPDATE " . DB_PREFIX . "article SET article_title='{$title}', update_time='{$update_time}' WHERE id=" . $did;
     $db->query($sql);
     $ret = ['status'=>'SUCC', 'msg'=>'操作成功!'];
@@ -51,9 +63,15 @@ if ($act == 'update') {
 // 删除节点
 if ($act == 'delete') {
     $did = $_REQUEST['did'];
+    $prid = $_REQUEST['prid'];
 
-    if ( is_null($did) ) {
+    if ( is_null($did) || is_null($prid) ) {
         echo json_encode(['status'=>'FAIL', 'msg'=>'缺少必要的参数值!']);
+        exit;
+    }
+
+    if ( strpos($pids, $prid) === false ) {
+        echo json_encode(['status'=>'FAIL', 'msg'=>'非法的操作!']);
         exit;
     }
 
@@ -65,11 +83,18 @@ if ($act == 'delete') {
 // 获取文章内容
 if ($act == 'get_article_content') {
     $did = $_REQUEST['did'];
+    $prid = $_REQUEST['prid'];
 
-    if ( is_null($did) ) {
+    if ( is_null($did) || is_null($prid) ) {
         echo json_encode(['status'=>'FAIL', 'msg'=>'缺少必要的参数值!']);
         exit;
     }
+
+    if ( strpos($pids, $prid) === false ) {
+        echo json_encode(['status'=>'FAIL', 'msg'=>'非法的操作!']);
+        exit;
+    }
+
     $sql = 'SELECT article_content FROM ' . DB_PREFIX . 'article WHERE id=' . $did;
     $query = $db->query($sql);
     $row = $db->fetch_array($query);
@@ -80,12 +105,18 @@ if ($act == 'get_article_content') {
 // 保存文章内容
 if ($act == 'save_article_content') {
     $did = $_REQUEST['did'];
+    $prid = $_REQUEST['prid'];
     $node_type = $_REQUEST['node_type'];
     $update_time = date('Y-m-d H:i:s');
-    $article_content = addslashes($_REQUEST['article_content']);
+    $article_content = htmlspecialchars(addslashes($_REQUEST['article_content']));
 
-    if ( is_null($did) || is_null($node_type) || is_null($article_content) ) {
+    if ( is_null($did) || is_null($node_type) || is_null($article_content) || is_null($prid) ) {
         echo json_encode(['status'=>'FAIL', 'msg'=>'缺少必要的参数值!']);
+        exit;
+    }
+
+    if ( strpos($pids, $prid) === false ) {
+        echo json_encode(['status'=>'FAIL', 'msg'=>'非法的操作!']);
         exit;
     }
 
@@ -98,8 +129,9 @@ if ($act == 'save_article_content') {
 if ($act == 'create_project') {
     $project_name = $_REQUEST['project_name'];
     $project_description = $_REQUEST['project_description'];
-    $project_name =  addslashes($project_name);
-    $project_description = addslashes($project_description);
+    $project_name =  htmlspecialchars(addslashes($project_name));
+    $project_description = htmlspecialchars(addslashes($project_description));
+    $is_open = $_REQUEST['is_open'];
 
     if ( is_null($project_name) || is_null($project_description) ) {
         echo json_encode(['status'=>'FAIL', 'msg'=>'缺少必要的参数值!']);
@@ -108,8 +140,8 @@ if ($act == 'create_project') {
 
     $create_time = $update_time = date('Y-m-d H:i:s');
 
-    $sql = "INSERT INTO " . DB_PREFIX . "project(project_name, project_description, user_id, 
-            create_time, update_time) VALUES('{$project_name}', '{$project_description}', $current_admin_uid, '{$create_time}', '{$update_time}')";
+    $sql = "INSERT INTO " . DB_PREFIX . "project(project_name, project_description, is_open, user_id, 
+            create_time, update_time) VALUES('{$project_name}', '{$project_description}', $is_open, $current_admin_uid, '{$create_time}', '{$update_time}')";
     $db->query($sql);
     $insert_id = $db->insert_id();
     $ret = ['status'=>'SUCC', 'pid'=>intval($insert_id), 'msg'=>'添加成功!'];
@@ -121,6 +153,11 @@ if ($act == 'delete_project') {
 
     if ( is_null($pid) ) {
         echo json_encode(['status'=>'FAIL', 'msg'=>'缺少必要的参数值!']);
+        exit;
+    }
+
+    if ( strpos($pids, $prid) === false ) {
+        echo json_encode(['status'=>'FAIL', 'msg'=>'非法的操作!']);
         exit;
     }
 

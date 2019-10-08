@@ -18,10 +18,23 @@ if ( !empty($_POST) ) {
     $password = md5(PWD_SALT . trim($_POST['password']) . PWD_SALT);
     if ($md5_pass != $password) {
         echo json_encode(['status'=>'FAIL', 'code'=>-2, 'msg'=>'密码不正确']);
-        exit;
+    } else {
+        // 登录成功后, 首先更新一下最后用户表的last_login_time字段, 再获取用户自己的project_id列表存储在session中
+
+        $_SESSION['user_id'] = $row['id'];
+        $sql = "UPDATE " . DB_PREFIX . "user SET last_login_time='" . date('Y-m-d H:i:s') . "' WHERE id=" . $row['id'];
+        $db->query($sql);
+
+        $sql = "SELECT id FROM " . DB_PREFIX . "project WHERE user_id=" . $row['id'];
+        $query = $db->query($sql);
+        $pids = ',';
+        while ( $row = $db->fetch_array($query) ) {
+            $pids .= $row['id'] . ',';
+        }
+        $_SESSION['pids'] = $pids;
     }
+
     echo json_encode(['status'=>'SUCC', 'code'=>1, 'msg'=>'登录成功']);
-    $_SESSION['user_id'] = $row['id'];
     exit;
 }
 ?>
