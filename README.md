@@ -5,7 +5,7 @@ Let's try it!
 
 http://idoc.codespeaking.com
 
-# 本地部署方法
+### 本地部署方法
 将项目git clone到本地, 配置虚拟域名(不配置域名, 直接使用localhost也可以)
 
 在根目录下创建config.php, 下面是一个样例：
