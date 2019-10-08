@@ -95,11 +95,10 @@ if ($act == 'get_article_content') {
         exit;
     }
 
-    $sql = 'SELECT article_content FROM ' . DB_PREFIX . 'article WHERE id=' . $did;
+    $sql = 'SELECT article_content, node_type FROM ' . DB_PREFIX . 'article WHERE id=' . $did;
     $query = $db->query($sql);
     $row = $db->fetch_array($query);
-    $content = $row['article_content'];
-    $ret = ['status'=>'SUCC', 'msg'=>'查询成功!', 'content'=>$content];
+    $ret = ['status'=>'SUCC', 'msg'=>'查询成功!', 'content'=>$row['article_content'], 'node_type'=>$row['node_type']];
 }
 
 // 保存文章内容
@@ -150,6 +149,7 @@ if ($act == 'create_project') {
 // 删除项目
 if ($act == 'delete_project') {
     $pid = $_REQUEST['pid'];
+    $prid = $_REQUEST['prid'];
 
     if ( is_null($pid) ) {
         echo json_encode(['status'=>'FAIL', 'msg'=>'缺少必要的参数值!']);

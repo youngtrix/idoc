@@ -131,7 +131,7 @@ function getArticleInfo($project_id) {
         if ( !confirm('确定要进行此操作?') ) {
             return;
         }
-        $.post('api.php', {'pid':pid, 'act':'delete_project'}, function(res){
+        $.post('api.php', {'pid':pid, 'prid':pid, 'act':'delete_project'}, function(res){
             if (res.status == 'SUCC') {
                 alert('操作成功!');
                 history.go(0);

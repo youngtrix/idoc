@@ -49,7 +49,7 @@ $optionHtml = getSelectOptionsOfTree(getTreeNode($rows), 0, $did);
 <div id="layout">
     <header>
         <span>当前位置：<?php echo $project_name;?></span>&nbsp;&nbsp;>&nbsp;&nbsp;<select id="articles"><?php echo $optionHtml; ?></select>&nbsp;&nbsp;
-        设置<abbr title="当设置为目录节点时, 在前端页面无法浏览该节点的文章内容, 点击时表现为展开其子节点">节点类型</abbr>：<label style="font-weight:normal;"><input type="radio" <?php if($node_type==0){echo 'checked';} ?> value="0" id="optionsRadios1" name="node_type">文章节点</label>&nbsp;<label style="font-weight:normal;"><input type="radio" <?php if($node_type==1){echo 'checked';} ?> value="1" id="optionsRadios2" name="node_type">目录节点</label>
+        设置<abbr title="当设置为目录节点时, 在前端页面无法浏览该节点的文章内容, 点击时表现为展开其子节点">节点类型</abbr>：<label style="font-weight:normal;"><input type="radio" <?php if($node_type==0){echo 'checked';} ?> value="0" id="optionsRadios1" name="nt">文章节点</label>&nbsp;<label style="font-weight:normal;"><input type="radio" <?php if($node_type==1){echo 'checked';} ?> value="1" id="optionsRadios2" name="nt">目录节点</label>
     </header>
     <div id="test-editormd">
         <textarea style="display:none;" id="md"><?php echo $article_content;?></textarea>
@@ -218,6 +218,7 @@ $('#articles').change(function(){
     var val = $(this).val();
     var prid = $('#prid').val();
     $.post('api.php', {'did':val, 'prid':prid, 'act':'get_article_content'}, function(res){
+        $("input[type=radio][name=nt][value='"+res.node_type+"']").prop("checked",true);
         $('#md').val(res.content);
         testEditor = editormd("test-editormd", {
             width: "98%",
@@ -252,7 +253,7 @@ $('#articles').change(function(){
 function save_content() {
     var did = $('#articles').val();
     var prid = $('#prid').val();
-    var node_type = $("input[name='node_type']:checked").val();
+    var node_type = $("input[name='nt']:checked").val();
     var article_content = testEditor.getMarkdown();
     $.post('api.php', {'did':did, 'node_type':node_type, 'prid':prid, 'article_content':article_content, 'act':'save_article_content'}, function(res){
         if (res.status == 'SUCC') {
