@@ -43,10 +43,9 @@ $pids = getParentID($article_id);
 $tree = getTreeNode($rows);
 
 $navMenu = getNavMenuOfTree($tree, $prid, $article_id, $pids);
-
-
 ?>
-<html><head>
+<html>
+<head>
     <meta charset="UTF-8">
     <title><?php echo $article_title;?> · <?php echo $project_name;?> · idoc</title>
     <meta name="description" content="<?php echo $project_description;?>">
@@ -82,10 +81,9 @@ $navMenu = getNavMenuOfTree($tree, $prid, $article_id, $pids);
                 </div>
                 <div class="sidebar-body">
                     <div class="catalog-body">
-                        <?php
+                    <?php
                         echo $navMenu;
-                        ?>
-
+                    ?>
                     </div>
                 </div>
                 <div class="sidebar-copyright">本文档使用 <a href="http://idoc.codespeaking.com" target="_blank">idoc</a> 构建</div>
@@ -115,7 +113,7 @@ $navMenu = getNavMenuOfTree($tree, $prid, $article_id, $pids);
                 </div>
             </div>
             <script type="text/javascript">
-                $.getJSON('get.php', {'aid': <?php echo $article_id;?>, 'id':<?php echo $_GET['id'];?>}, function(json){
+                $.getJSON('get.php', {'aid': <?php echo $article_id;?>, 'id':<?php echo intval($_GET['id']);?>}, function(json){
                     content = json.content.replace(/\n/g, "\t\r\n");
                     //content = json.content.replace(/\r\n/g, "\t\r\n");
                     $('#article_title').text(json.title);
