@@ -55,9 +55,15 @@ if ($act == 'update') {
 
     $update_time = date('Y-m-d H:i:s');
     $title = htmlspecialchars(addslashes($title));
-    $sql = "UPDATE " . DB_PREFIX . "article SET article_title='{$title}', update_time='{$update_time}' WHERE id=" . $did;
+    $sql = "UPDATE " . DB_PREFIX . "article SET article_title='{$title}', update_time='{$update_time}' WHERE id=" . $did . " AND project_id=" . $prid;
     $db->query($sql);
-    $ret = ['status'=>'SUCC', 'msg'=>'操作成功!'];
+    $affected_rows = $db->affected_rows();
+    if ($affected_rows > 0) {
+        $ret = ['status'=>'SUCC', 'msg'=>'操作成功!'];
+    } else {
+        $ret = ['status'=>'FAIL', 'msg'=>'操作失败!'];
+    }
+
 }
 
 // 删除节点
@@ -75,9 +81,14 @@ if ($act == 'delete') {
         exit;
     }
 
-    $sql = "DELETE FROM " . DB_PREFIX . "article WHERE id=" . $did;
+    $sql = "DELETE FROM " . DB_PREFIX . "article WHERE id=" . $did . " AND project_id=" . $prid;
     $db->query($sql);
-    $ret = ['status'=>'SUCC', 'msg'=>'操作成功!'];
+    $affected_rows = $db->affected_rows();
+    if ($affected_rows > 0) {
+        $ret = ['status'=>'SUCC', 'msg'=>'操作成功!'];
+    } else {
+        $ret = ['status'=>'FAIL', 'msg'=>'操作失败!'];
+    }
 }
 
 // 获取文章内容
@@ -95,7 +106,7 @@ if ($act == 'get_article_content') {
         exit;
     }
 
-    $sql = 'SELECT article_content, node_type FROM ' . DB_PREFIX . 'article WHERE id=' . $did;
+    $sql = 'SELECT article_content, node_type FROM ' . DB_PREFIX . 'article WHERE id=' . $did . " AND project_id=" . $prid;
     $query = $db->query($sql);
     $row = $db->fetch_array($query);
     $ret = ['status'=>'SUCC', 'msg'=>'查询成功!', 'content'=>$row['article_content'], 'node_type'=>$row['node_type']];
@@ -119,9 +130,14 @@ if ($act == 'save_article_content') {
         exit;
     }
 
-    $sql = "UPDATE " . DB_PREFIX . "article SET article_content='{$article_content}', node_type=$node_type WHERE id=" . $did;
+    $sql = "UPDATE " . DB_PREFIX . "article SET article_content='{$article_content}', node_type=$node_type WHERE id=" . $did . " AND project_id=" . $prid;
     $db->query($sql);
-    $ret = ['status'=>'SUCC', 'msg'=>'操作成功!'];
+    $affected_rows = $db->affected_rows();
+    if ($affected_rows > 0) {
+        $ret = ['status'=>'SUCC', 'msg'=>'操作成功!'];
+    } else {
+        $ret = ['status'=>'FAIL', 'msg'=>'操作失败!'];
+    }
 }
 
 // 创建项目
@@ -150,14 +166,13 @@ if ($act == 'create_project') {
 // 删除项目
 if ($act == 'delete_project') {
     $pid = intval($_REQUEST['pid']);
-    $prid = intval($_REQUEST['prid']);
 
-    if ( is_null($pid) || is_null($prid) ) {
+    if ( is_null($pid) ) {
         echo json_encode(['status'=>'FAIL', 'msg'=>'缺少必要的参数值!']);
         exit;
     }
 
-    if ( empty($pids) || !in_array($prid, $pids) ) {
+    if ( empty($pids) || !in_array($pid, $pids) ) {
         echo json_encode(['status'=>'FAIL', 'msg'=>'非法的操作!']);
         exit;
     }
