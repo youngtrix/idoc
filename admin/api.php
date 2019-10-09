@@ -14,16 +14,16 @@ $ret = [];
 
 // 新增节点
 if ($act == 'insert') {
-    $title = $_REQUEST['title'];
-    $did = $_REQUEST['did'];
-    $prid = $_REQUEST['prid'];
+    $title = trim($_REQUEST['title']);
+    $did = intval($_REQUEST['did']);
+    $prid = intval($_REQUEST['prid']);
 
     if ( is_null($title) || is_null($did) || is_null($prid) ) {
         echo json_encode(['status'=>'FAIL', 'msg'=>'缺少必要的参数值!']);
         exit;
     }
 
-    if ( strpos($pids, ',' . $prid . ',') === false ) {
+    if ( empty($pids) || !in_array($prid, $pids) ) {
         echo json_encode(['status'=>'FAIL', 'msg'=>'非法的操作!']);
         exit;
     }
@@ -39,16 +39,16 @@ if ($act == 'insert') {
 
 // 更新节点
 if ($act == 'update') {
-    $title = $_REQUEST['title'];
-    $did = $_REQUEST['did'];
-    $prid = $_REQUEST['prid'];
+    $title = trim($_REQUEST['title']);
+    $did = intval($_REQUEST['did']);
+    $prid = intval($_REQUEST['prid']);
 
     if ( is_null($title) || is_null($did) || is_null($prid) ) {
         echo json_encode(['status'=>'FAIL', 'msg'=>'缺少必要的参数值!']);
         exit;
     }
 
-    if ( strpos($pids, ',' . $prid . ',') === false ) {
+    if ( empty($pids) || !in_array($prid, $pids) ) {
         echo json_encode(['status'=>'FAIL', 'msg'=>'非法的操作!']);
         exit;
     }
@@ -62,15 +62,15 @@ if ($act == 'update') {
 
 // 删除节点
 if ($act == 'delete') {
-    $did = $_REQUEST['did'];
-    $prid = $_REQUEST['prid'];
+    $did = intval($_REQUEST['did']);
+    $prid = intval($_REQUEST['prid']);
 
     if ( is_null($did) || is_null($prid) ) {
         echo json_encode(['status'=>'FAIL', 'msg'=>'缺少必要的参数值!']);
         exit;
     }
 
-    if ( strpos($pids, ',' . $prid . ',') === false ) {
+    if ( empty($pids) || !in_array($prid, $pids) ) {
         echo json_encode(['status'=>'FAIL', 'msg'=>'非法的操作!']);
         exit;
     }
@@ -82,15 +82,15 @@ if ($act == 'delete') {
 
 // 获取文章内容
 if ($act == 'get_article_content') {
-    $did = $_REQUEST['did'];
-    $prid = $_REQUEST['prid'];
+    $did = intval($_REQUEST['did']);
+    $prid = intval($_REQUEST['prid']);
 
     if ( is_null($did) || is_null($prid) ) {
         echo json_encode(['status'=>'FAIL', 'msg'=>'缺少必要的参数值!']);
         exit;
     }
 
-    if ( strpos($pids, ',' . $prid . ',') === false ) {
+    if ( empty($pids) || !in_array($prid, $pids) ) {
         echo json_encode(['status'=>'FAIL', 'msg'=>'非法的操作!']);
         exit;
     }
@@ -103,9 +103,9 @@ if ($act == 'get_article_content') {
 
 // 保存文章内容
 if ($act == 'save_article_content') {
-    $did = $_REQUEST['did'];
-    $prid = $_REQUEST['prid'];
-    $node_type = $_REQUEST['node_type'];
+    $did = intval($_REQUEST['did']);
+    $prid = intval($_REQUEST['prid']);
+    $node_type = intval($_REQUEST['node_type']);
     $update_time = date('Y-m-d H:i:s');
     $article_content = htmlspecialchars(addslashes($_REQUEST['article_content']));
 
@@ -114,7 +114,7 @@ if ($act == 'save_article_content') {
         exit;
     }
 
-    if ( strpos($pids, ',' . $prid . ',') === false ) {
+    if ( empty($pids) || !in_array($prid, $pids) ) {
         echo json_encode(['status'=>'FAIL', 'msg'=>'非法的操作!']);
         exit;
     }
@@ -126,8 +126,8 @@ if ($act == 'save_article_content') {
 
 // 创建项目
 if ($act == 'create_project') {
-    $project_name = $_REQUEST['project_name'];
-    $project_description = $_REQUEST['project_description'];
+    $project_name = trim($_REQUEST['project_name']);
+    $project_description = trim($_REQUEST['project_description']);
     $project_name =  htmlspecialchars(addslashes($project_name));
     $project_description = htmlspecialchars(addslashes($project_description));
     $is_open = $_REQUEST['is_open'];
@@ -144,19 +144,20 @@ if ($act == 'create_project') {
     $db->query($sql);
     $insert_id = $db->insert_id();
     $ret = ['status'=>'SUCC', 'pid'=>intval($insert_id), 'msg'=>'添加成功!'];
+    $_SESSION['pids'][] = intval($insert_id);
 }
 
 // 删除项目
 if ($act == 'delete_project') {
-    $pid = $_REQUEST['pid'];
-    $prid = $_REQUEST['prid'];
+    $pid = intval($_REQUEST['pid']);
+    $prid = intval($_REQUEST['prid']);
 
-    if ( is_null($pid) ) {
+    if ( is_null($pid) || is_null($prid) ) {
         echo json_encode(['status'=>'FAIL', 'msg'=>'缺少必要的参数值!']);
         exit;
     }
 
-    if ( strpos($pids, ',' . $prid . ',') === false ) {
+    if ( empty($pids) || !in_array($prid, $pids) ) {
         echo json_encode(['status'=>'FAIL', 'msg'=>'非法的操作!']);
         exit;
     }
@@ -170,7 +171,7 @@ if ($act == 'delete_project') {
 
 // 编辑项目前的检查
 if ($act == 'edit_project') {
-    $pid = $_REQUEST['pid'];
+    $pid = intval($_REQUEST['pid']);
     $sql = 'SELECT id FROM ' . DB_PREFIX . 'article WHERE project_id=' . $pid;
     $query = $db->query($sql);
     $row = $db->fetch_array($query);

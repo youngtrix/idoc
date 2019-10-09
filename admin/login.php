@@ -18,6 +18,7 @@ if ( !empty($_POST) ) {
     $password = md5(PWD_SALT . trim($_POST['password']) . PWD_SALT);
     if ($md5_pass != $password) {
         echo json_encode(['status'=>'FAIL', 'code'=>-2, 'msg'=>'密码不正确']);
+        exit;
     } else {
         // 登录成功后, 首先更新一下最后用户表的last_login_time字段, 再获取用户自己的project_id列表存储在session中
 
@@ -27,9 +28,9 @@ if ( !empty($_POST) ) {
 
         $sql = "SELECT id FROM " . DB_PREFIX . "project WHERE user_id=" . $row['id'];
         $query = $db->query($sql);
-        $pids = ',';
+        $pids = [];
         while ( $row = $db->fetch_array($query) ) {
-            $pids .= $row['id'] . ',';
+            $pids[] = $row['id'];
         }
         $_SESSION['pids'] = $pids;
     }
@@ -99,7 +100,7 @@ function login() {
             alert('登录成功!');
             location.href = 'index.php';
         } else if(res.code == -2) {
-            alert('登录失败,密码错误!')
+            alert('登录失败,密码错误!');
         } else if (res.code == -1) {
             alert('登录失败,用户名不存在!');
         }

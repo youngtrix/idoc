@@ -3,6 +3,10 @@ session_start();
 require 'config.php';
 require 'db.class.php';
 
+if ( !isset($_SESSION['user_id']) ) {
+    $_SESSION['user_id'] = 0;
+}
+
 $db = MySqlii::getInstance();
 $sql = 'SELECT A.*, B.username FROM ' . DB_PREFIX . 'project as A LEFT JOIN '. DB_PREFIX .'user as B ON(A.user_id=B.id) WHERE A.is_open=1 OR A.user_id=' . intval($_SESSION['user_id']) . ' order by A.id DESC';
 $query = $db->query($sql);
