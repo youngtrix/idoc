@@ -54,11 +54,11 @@ if ($act == 'update') {
     }
 
     $update_time = date('Y-m-d H:i:s');
-    $title = htmlspecialchars(addslashes($title));
+    $title = htmlspecialchars(addslashes($title), ENT_NOQUOTES);
     $sql = "UPDATE " . DB_PREFIX . "article SET article_title='{$title}', update_time='{$update_time}' WHERE id=" . $did . " AND project_id=" . $prid;
     $db->query($sql);
     $affected_rows = $db->affected_rows();
-    if ($affected_rows > 0) {
+    if ($affected_rows >= 0) {
         $ret = ['status'=>'SUCC', 'msg'=>'操作成功!'];
     } else {
         $ret = ['status'=>'FAIL', 'msg'=>'操作失败!'];
@@ -118,7 +118,7 @@ if ($act == 'save_article_content') {
     $prid = intval($_REQUEST['prid']);
     $node_type = intval($_REQUEST['node_type']);
     $update_time = date('Y-m-d H:i:s');
-    $article_content = htmlspecialchars(addslashes($_REQUEST['article_content']));
+    $article_content = htmlspecialchars(addslashes($_REQUEST['article_content']), ENT_NOQUOTES);
 
     if ( is_null($did) || is_null($node_type) || is_null($article_content) || is_null($prid) ) {
         echo json_encode(['status'=>'FAIL', 'msg'=>'缺少必要的参数值!']);
@@ -133,7 +133,7 @@ if ($act == 'save_article_content') {
     $sql = "UPDATE " . DB_PREFIX . "article SET article_content='{$article_content}', node_type=$node_type WHERE id=" . $did . " AND project_id=" . $prid;
     $db->query($sql);
     $affected_rows = $db->affected_rows();
-    if ($affected_rows > 0) {
+    if ($affected_rows >= 0) {
         $ret = ['status'=>'SUCC', 'msg'=>'操作成功!'];
     } else {
         $ret = ['status'=>'FAIL', 'msg'=>'操作失败!'];
@@ -144,8 +144,8 @@ if ($act == 'save_article_content') {
 if ($act == 'create_project') {
     $project_name = trim($_REQUEST['project_name']);
     $project_description = trim($_REQUEST['project_description']);
-    $project_name =  htmlspecialchars(addslashes($project_name));
-    $project_description = htmlspecialchars(addslashes($project_description));
+    $project_name =  htmlspecialchars(addslashes($project_name), ENT_NOQUOTES);
+    $project_description = htmlspecialchars(addslashes($project_description), ENT_NOQUOTES);
     $is_open = $_REQUEST['is_open'];
 
     if ( is_null($project_name) || is_null($project_description) ) {
