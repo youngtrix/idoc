@@ -258,6 +258,7 @@ function save_content() {
     $.post('api.php', {'did':did, 'node_type':node_type, 'prid':prid, 'article_content':article_content, 'act':'save_article_content'}, function(res){
         if (res.status == 'SUCC') {
             alert('保存成功!');
+			history.go(0);
         } else {
             alert('保存失败!');
         }
