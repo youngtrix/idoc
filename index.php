@@ -69,6 +69,7 @@ if ( isset($_SESSION['user_id']) && intval($_SESSION['user_id'])>0 ) {
 							<li class="hidden"><a class="page-scroll" href="#page-top"></a>	</li>
 							<li><a class="page-scroll scroll" href="#home">首页</a></li>
 							<li><a class="page-scroll scroll" href="#about">关于</a></li>
+                            <li><a href="/book.php?id=14" target="_blank">示例</a></li>
                             <li><a class="page-scroll scroll" href="javascript:void(0);" data-toggle="modal" data-target="#myModal">联系</a></li>
                             <li style="padding-top:10px;"><a class="github-button" href="https://github.com/coderzheng/idoc/fork" data-icon="octicon-repo-forked" data-size="large" aria-label="Fork coderzheng/idoc on GitHub">Fork</a></li>
                             <?php
