@@ -1,6 +1,7 @@
 <?php
 require 'config.php';
 require 'db.class.php';
+require 'help.class.php';
 
 $aid = isset($_GET['aid']) ? intval($_GET['aid']) : 0;
 $id = isset($_GET['id']) ? intval($_GET['id']) : 0;
@@ -17,7 +18,16 @@ $row = $db->fetch_array($query);
 $title = $row['article_title'];
 $content = $row['article_content'];
 
-$sql = 'SELECT A.id, A.article_title, A.project_id FROM ' . DB_PREFIX .'article as A WHERE A.project_id=' . $id. ' ORDER BY A.order_id ASC, A.id ASC';
+$sql = 'SELECT A.id, A.article_title, A.project_id, A.parent_id  FROM ' . DB_PREFIX .'article as A WHERE A.project_id=' . $id. ' ORDER BY A.order_id ASC, A.id ASC';
+$query = $db->query($sql);
+while ( $row = $db->fetch_array($query) ) {
+    $rows[] = ['id'=>$row['id'], 'parent_id'=>$row['parent_id']];
+}
+$tree = getTreeNode($rows);
+$treeIds = getTreeNodeIds($tree);
+$ids = implode(',', $treeIds);
+
+$sql = 'SELECT A.id, A.article_title, A.project_id, A.parent_id  FROM ' . DB_PREFIX .'article as A WHERE A.project_id=' . $id. ' ORDER BY FIELD(A.id,' . $ids . ')';
 $query = $db->query($sql);
 $rows = [];
 
@@ -48,6 +58,7 @@ if ( isset($rows[$prev_index]) ) {
 if ( isset($rows[$next_index]) ) {
     $next = '下一篇：<a href="book.php?id=' . $id . '&aid=' . $rows[$next_index]['id'] . '">' . $rows[$next_index]['article_title'] . '</a>';
 }
+
 
 echo json_encode(['status'=>'SUCC', 'msg'=>'成功', 'content'=>$content, 'title'=>$title, 'prev'=>$prev, 'next'=>$next]);
 exit;

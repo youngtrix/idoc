@@ -40,6 +40,19 @@ function getTreeNode($nodesArr, $parent_id = null) {
     return $tree;
 }
 
+// 获取节点树的节点ID数组(按层次结构平铺)
+function getTreeNodeIds($tree) {
+    $ids = array();
+    foreach ($tree as $v) {
+        $ids[] = $v['id'];
+        if ( isset($v['child']) ) {
+            $t = getTreeNodeIds($v['child']);
+            $ids = array_merge($ids, $t);
+        }
+    }
+    return $ids;
+}
+
 // 根据节点树信息获取节点树的ul字符串
 function getUlOfTree($tree) {
     $html = '<ul>';
@@ -75,10 +88,11 @@ function getSelectOptionsOfTree($tree, $level=0, $article_id=0) {
 
 // 根据节点树信息获取节点树的导航菜单
 function getNavMenuOfTree($tree, $project_id=0, $article_id=0, $pids=[]) {
-    $html = '<ul>';
+    $html = '<ul id="article_tree">';
     foreach ($tree as $v) {
         if ($v['node_type'] == 0) {
-            $a_href = 'book.php?aid=' . $v['id'] . '&id=' . $project_id;
+            //$a_href = 'book.php?aid=' . $v['id'] . '&id=' . $project_id;
+            $a_href = 'javascript:getArticleContents('.$v['id'].','.$project_id.');';
         } else {
             $a_href = "javascript:void(0);";
         }
@@ -101,9 +115,9 @@ function getNavMenuOfTree($tree, $project_id=0, $article_id=0, $pids=[]) {
         }
 
         if ( isset($v['child']) ) {
-            $html .= '<li class="' . $li_class . '"><div class="wholerow"></div><i class="' . $i_class . '"></i><a class="text" href="' . $a_href .  '">' . $v['article_title'] . '</a>';
+            $html .= '<li class="' . $li_class . '" id="'.$v['id'].'"><div class="wholerow"></div><i class="' . $i_class . '"></i><a class="text" href="' . $a_href .  '">' . $v['article_title'] . '</a>';
         } else {
-            $html .= '<li class="' . $li_class . '"><div class="wholerow"></div><i class="' . $i_class . '"></i><a class="text" href="' . $a_href . '">' . $v['article_title'] . '</a>';
+            $html .= '<li class="' . $li_class . '" id="'.$v['id'].'"><div class="wholerow"></div><i class="' . $i_class . '"></i><a class="text" href="' . $a_href . '">' . $v['article_title'] . '</a>';
         }
 
         if ( isset($v['child']) ) {
@@ -223,11 +237,6 @@ function getServerinfo() {
     $s23 = isfun("mcrypt_cbc");
     $s24 = isfun("mhash_count");
 
-//    for ($i=1; $i<=24; $i++) {
-//        $v = 's' .$i;
-//        echo ${$v} .  "<br />";
-//    }
-
     return [$s1, $s2, $s3, $s4, $s5, $s6, $s7, $s8, $s9, $s10, $s11, $s12, $s13, $s14, $s15, $s16, $s17, $s18, $s19, $s20, $s21, $s22, $s23, $s24, $s25, $s26, $s27];
 }
 
@@ -294,4 +303,10 @@ EOT;
 </html>
 EOT;
     exit;
+}
+
+function isEmail($email) {
+    $pattern = "/^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,})$/";
+    preg_match($pattern, $email, $matches);
+    return empty($matches[0]) ? false : true;
 }

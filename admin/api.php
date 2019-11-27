@@ -118,7 +118,7 @@ if ($act == 'save_article_content') {
     $prid = intval($_REQUEST['prid']);
     $node_type = intval($_REQUEST['node_type']);
     $update_time = date('Y-m-d H:i:s');
-    $article_content = htmlspecialchars(addslashes($_REQUEST['article_content']), ENT_NOQUOTES);
+    $article_content = addslashes($_REQUEST['article_content']);
 
     if ( is_null($did) || is_null($node_type) || is_null($article_content) || is_null($prid) ) {
         echo json_encode(['status'=>'FAIL', 'msg'=>'缺少必要的参数值!']);
@@ -145,7 +145,7 @@ if ($act == 'create_project') {
     $project_name = trim($_REQUEST['project_name']);
     $project_description = trim($_REQUEST['project_description']);
     $project_name =  htmlspecialchars(addslashes($project_name), ENT_NOQUOTES);
-    $project_description = htmlspecialchars(addslashes($project_description), ENT_NOQUOTES);
+    $project_description = addslashes($project_description);
     $is_open = $_REQUEST['is_open'];
 
     if ( is_null($project_name) || is_null($project_description) ) {

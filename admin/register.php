@@ -9,8 +9,20 @@ if ( !empty($_POST) ) {
     $password = $_POST['password'];
 
     if ( empty($username) || empty($password) ) {
-        emMsg('用户名和密码不能为空!');
+        echo json_encode(['status'=>'FAIL', 'code'=>-2, 'msg'=>'用户名和密码不能为空!']);
+        exit;
     }
+
+    if ( !isEmail($username) ) {
+        echo json_encode(['status'=>'FAIL', 'code'=>-3, 'msg'=>'用户名不符合要求,请重试!']);
+        exit;
+    }
+
+    if ( strlen($password) < 6 ) {
+        echo json_encode(['status'=>'FAIL', 'code'=>-4, 'msg'=>'密码不符合要求,请重试!']);
+        exit;
+    }
+
     $new_password = md5(PWD_SALT . $password . PWD_SALT);
     $db = MySqlii::getInstance();
     $time = date('Y-m-d H:i:s');
@@ -20,7 +32,7 @@ if ( !empty($_POST) ) {
     if ($affect_rows > 0) {
         echo json_encode(['status'=>'SUCC', 'code'=>1, 'msg'=>'操作成功!']);
     } else {
-        echo json_encode(['status'=>'FAIL', 'code'=>-1, 'msg'=>'操作失败!']);
+        echo json_encode(['status'=>'FAIL', 'code'=>-1, 'msg'=>'用户名已存在,请更换用户名后重试!']);
     }
     exit;
 }
@@ -48,20 +60,19 @@ if ( !empty($_POST) ) {
 <body class="gray-bg">
 
 <div class="middle-box text-center loginscreen   animated fadeInDown">
+    <div style="position:absolute;font-size:12px;top:30px;" id="abs"><a href="../index.php">← 回首页</a></div>
     <div>
         <div>
-
             <h1 class="logo-name">idoc</h1>
-
         </div>
         <h3>欢迎注册 idoc</h3>
         <p>创建一个idoc新账户</p>
         <form class="m-t" role="form" action="login.html" onsubmit="return false;">
             <div class="form-group">
-                <input type="text" name="username" id="username" class="form-control" placeholder="请输入用户名" required="">
+                <input type="text" name="username" id="username" class="form-control" placeholder="请输入用户名(邮箱账号)" required="">
             </div>
             <div class="form-group">
-                <input type="password" name="password" id="password" class="form-control" placeholder="请输入密码" required="">
+                <input type="password" name="password" id="password" class="form-control" placeholder="请输入密码(字符串长度至少为6)" required="">
             </div>
             <div class="form-group">
                 <input type="password" name="confirmpwd" id="confirmpwd" class="form-control" placeholder="请再次输入密码" required="">
@@ -106,11 +117,12 @@ if ( !empty($_POST) ) {
         }
 
         $.post('register.php', {'username':username, 'password':password}, function(res){
-            if (res.code == -1) {
-                alert('用户名已存在,请更换用户名后重试!');
-            } else if (res.code == 1) {
-                alert('注册成功!');
-                history.go(0);
+            if (res.status == 'SUCC') {
+                alert('注册成功');
+                location.href = '../index.php';
+            } else {
+                var msg = '注册失败, ' + res.msg;
+                alert(msg);
             }
         }, 'json');
     }

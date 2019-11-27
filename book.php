@@ -113,18 +113,45 @@ $navMenu = getNavMenuOfTree($tree, $prid, $article_id, $pids);
                 </div>
             </div>
             <script type="text/javascript">
-                $.getJSON('get.php', {'aid': <?php echo $article_id;?>, 'id':<?php echo intval($_GET['id']);?>}, function(json){
+                var aid = <?php echo $article_id;?>;
+                var id = <?php echo $prid;?>;
+                $.getJSON('get.php', {'aid':aid, 'id':id}, function(json){
                     content = json.content.replace(/\n/g, "\t\r\n");
-                    //content = json.content.replace(/\r\n/g, "\t\r\n");
+                    $('ul#article_tree').children('li').removeClass('active');
+                    $('li#' + aid).addClass('active');
+                    if ( $('li#' + aid + '>li').length > 0) {
+                        $('li#' + aid).addClass("open");
+                    }
                     $('#article_title').text(json.title);
                     $('span.prev').html(json.prev);
                     $('span.next').html(json.next);
                     document.getElementById('article_content').innerHTML = marked(content);
                 });
 
-                $("ul").delegate("li", "click", function(){
-                    $(this).toggleClass("open");
-                    $(this).children("i:first").toggleClass("right down");
+                function getArticleContents(aid, id) {
+                    $.getJSON('get.php', {'aid': aid, 'id':id}, function(json){
+                        content = json.content.replace(/\n/g, "\t\r\n");
+                        $('ul#article_tree').children('li').removeClass('active');
+                        $('li#' + aid).addClass('active');
+//                        if ( $('li#' + aid + '>ul').length > 0) {
+//                            $('li#' + aid).addClass("open");
+//                        }
+                        $('#article_title').text(json.title);
+                        $('span.prev').html(json.prev);
+                        $('span.next').html(json.next);
+                        document.getElementById('article_content').innerHTML = marked(content);
+                    });
+                }
+
+                $("ul").delegate("li", "click", function(event){
+                    //$(this).toggleClass("open");
+                    //$(this).children("i:first").toggleClass("right down");
+                    var id = $(this).attr('id');
+                    if ( $('li#' + id + '>ul').length > 0) {
+                        $('li#' + id).toggleClass("open");
+                        $(this).children("i:first").toggleClass("right down");
+                    }
+                    event.stopPropagation();
                 });
 
                 $(".catalog-body > ul > li").hover( function() {

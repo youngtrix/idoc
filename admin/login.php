@@ -66,6 +66,7 @@ if ( !empty($_POST) ) {
 <body class="gray-bg">
 
 <div class="middle-box text-center loginscreen  animated fadeInDown">
+    <div style="position:absolute;font-size:12px;top:30px;" id="abs"><a href="../index.php">← 回首页</a></div>
     <div>
         <div>
             <h1 class="logo-name">idoc</h1>
@@ -98,7 +99,7 @@ function login() {
     $.post('login.php', {'username':username, 'password':password}, function(res){
         if (res.code == 1) {
             alert('登录成功!');
-            location.href = 'index.php';
+            location.href = '../index.php';
         } else if(res.code == -2) {
             alert('登录失败,密码错误!');
         } else if (res.code == -1) {
