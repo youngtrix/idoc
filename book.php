@@ -90,7 +90,7 @@ $navMenu = getNavMenuOfTree($tree, $prid, $article_id, $pids);
             </div>
             <div class="workspace">
                 <div class="article">
-                    <div class="article-head">
+                    <div class="article-head" id="article_head">
                         <div class="left tools"><a class="item icon"><i class="icon align justify"></i></a></div>
                         <h1 id="article_title"></h1>
                         <!--
@@ -133,19 +133,15 @@ $navMenu = getNavMenuOfTree($tree, $prid, $article_id, $pids);
                         content = json.content.replace(/\n/g, "\t\r\n");
                         $('ul#article_tree').children('li').removeClass('active');
                         $('li#' + aid).addClass('active');
-//                        if ( $('li#' + aid + '>ul').length > 0) {
-//                            $('li#' + aid).addClass("open");
-//                        }
                         $('#article_title').text(json.title);
                         $('span.prev').html(json.prev);
                         $('span.next').html(json.next);
                         document.getElementById('article_content').innerHTML = marked(content);
+                        window.scrollTo(0,0)
                     });
                 }
 
                 $("ul").delegate("li", "click", function(event){
-                    //$(this).toggleClass("open");
-                    //$(this).children("i:first").toggleClass("right down");
                     var id = $(this).attr('id');
                     if ( $('li#' + id + '>ul').length > 0) {
                         $('li#' + id).toggleClass("open");
