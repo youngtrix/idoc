@@ -1,5 +1,5 @@
 # idoc
-A simple document creater site written by php
+A simple document builder site written by php
 
 Let's try it! 
 
