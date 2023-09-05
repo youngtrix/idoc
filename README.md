@@ -32,6 +32,4 @@ define('AUTH_COOKIE_NAME','EM_AUTHCOOKIE_BWlf5txDunNPpmsKCCpbve9ENTxdvnr2');
 define('SITE_DOMAIN', 'localhost');
 ```
 
-$$\operatorname{Ent}(D)=-\sum_{k=1}^{|\mathcal{Y}|}p_k\log_{2}{p_k}$$
-
 访问首页前, 先创建数据库, 并运行根目录下的schema.sql创建表。
